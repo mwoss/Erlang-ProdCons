@@ -10,11 +10,15 @@
 -author("Matthew").
 
 %% API
--export([start/1, stop/1, init/1, listener/1]).
+-export([start/2, stop/1, init/1, listener/1]).
 
-start(Buffer) ->
+start(_, Amount) when Amount =< 0 ->
+  io:format("Consumers started working~n");
+
+start(Buffer, Amount) ->
   ConsPID = spawn(consumer, init, [Buffer]),
-  spawn(consumer,listener,[ConsPID]).
+  spawn(consumer,listener,[ConsPID]),
+  start(Buffer, Amount - 1).
 
 init(Buffer) ->
   loop(Buffer).

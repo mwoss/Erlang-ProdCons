@@ -10,11 +10,15 @@
 -author("Matthew").
 
 %% API
--export([init/1, stop/1, start/1, listener/1]).
+-export([init/1, stop/1, start/2, listener/1]).
 
-start(Buffer) ->
+start(_, Amount) when Amount =< 0 ->
+  io:format("Producers started working~n");
+
+start(Buffer, Amount) when Amount >= 0 ->
   ProdPID = spawn(producer, init, [Buffer]),
-  spawn(producer, listener,[ProdPID]).
+  spawn(producer, listener,[ProdPID]),
+  start(Buffer, Amount - 1).
 
 init(Buffer) ->
   loop(Buffer).
